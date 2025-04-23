@@ -100,8 +100,8 @@ import (
 // New also records the stack trace at the point it was called.
 func New(message string) error {
 	return &fundamental{
-		msg:   message,
-		stack: callers(),
+		msg: message,
+		stk: callers(),
 	}
 }
 
@@ -110,19 +110,19 @@ func New(message string) error {
 // Errorf also records the stack trace at the point it was called.
 func Errorf(format string, args ...interface{}) error {
 	return &fundamental{
-		msg:   fmt.Sprintf(format, args...),
-		stack: callers(),
+		msg: fmt.Sprintf(format, args...),
+		stk: callers(),
 	}
 }
 
 // fundamental is an error that has a message and a stack, but no caller.
 type fundamental struct {
 	msg string
-	*stack
+	stk *stack
 }
 
 func (w *fundamental) Error() string {
-	return fmt.Sprintf("%s| %+v", w.msg, w.stack)
+	return fmt.Sprintf("%s| %+v", w.msg, w.stk)
 }
 
 // WithStack annotates err with a stack trace at the point WithStack was called.
@@ -139,7 +139,7 @@ func WithStack(err error) error {
 
 type withStack struct {
 	error
-	*stack
+	stk *stack
 }
 
 func (w *withStack) Cause() error { return w.error }
@@ -148,7 +148,7 @@ func (w *withStack) Cause() error { return w.error }
 func (w *withStack) Unwrap() error { return w.error }
 
 func (w *withStack) Error() string {
-	return fmt.Sprintf("%s| %+v", w.error.Error(), w.stack)
+	return fmt.Sprintf("%s| %+v", w.error.Error(), w.stk)
 }
 
 // Wrap returns an error annotating err with a stack trace
