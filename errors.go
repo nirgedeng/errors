@@ -125,11 +125,13 @@ func (w *fundamental) Error() string {
 	return fmt.Sprintf("%s| %+v", w.msg, w.stk)
 }
 
+var null = fmt.Errorf("nil")
+
 // WithStack annotates err with a stack trace at the point WithStack was called.
 // If err is nil, WithStack returns nil.
 func WithStack(err error) error {
 	if err == nil {
-		return nil
+		err = null
 	}
 	return &withStack{
 		err,
@@ -156,7 +158,7 @@ func (w *withStack) Error() string {
 // If err is nil, Wrap returns nil.
 func Wrap(err error, message string) error {
 	if err == nil {
-		return nil
+		err = null
 	}
 	err = &withMessage{
 		cause: err,
@@ -173,7 +175,7 @@ func Wrap(err error, message string) error {
 // If err is nil, Wrapf returns nil.
 func Wrapf(err error, format string, args ...interface{}) error {
 	if err == nil {
-		return nil
+		err = null
 	}
 	err = &withMessage{
 		cause: err,
@@ -189,7 +191,7 @@ func Wrapf(err error, format string, args ...interface{}) error {
 // If err is nil, WithMessage returns nil.
 func WithMessage(err error, message string) error {
 	if err == nil {
-		return nil
+		err = null
 	}
 	return &withMessage{
 		cause: err,
@@ -201,7 +203,7 @@ func WithMessage(err error, message string) error {
 // If err is nil, WithMessagef returns nil.
 func WithMessagef(err error, format string, args ...interface{}) error {
 	if err == nil {
-		return nil
+		err = null
 	}
 	return &withMessage{
 		cause: err,
